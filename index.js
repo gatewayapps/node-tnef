@@ -175,7 +175,7 @@ var decodeTNEFObject = ((data) => {
     return object
 })
 
-DecodeFile('./winmail54.dat').then((result) => {
+DecodeFile('./testFiles/attachments.dat').then((result) => {
     console.log(result)
 
     // if there is an attachment, extract it and save to file
