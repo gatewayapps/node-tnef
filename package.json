@@ -1,0 +1,21 @@
+{
+  "name": "node-tnef",
+  "version": "1.0.0",
+  "description": "TNEF Parser using NodeJS",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "tnef",
+    "node",
+    "parser",
+    "email"
+  ],
+  "author": "John Murphy (Gateway Apps, LLC.)",
+  "license": "ISC",
+  "dependencies": {
+    "bluebird": "^3.5.1",
+    "convert-string": "^0.1.0"
+  }
+}
