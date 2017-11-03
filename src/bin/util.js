@@ -19,7 +19,7 @@ var byteArrayToInt = ((bytes) => {
 // process bytes from array using offset and length
 var processBytes = ((data, offset, length) => {
     var bytesToProcess = []
-    for(i = offset; i < (offset + length); i++) {
+    for(var i = offset; i < (offset + length); i++) {
         bytesToProcess.push(data[i])
     }
 
@@ -30,7 +30,7 @@ var processBytes = ((data, offset, length) => {
 var processBytesToInteger = ((data, offset, length) => {
     var bytesToProcess = []
     
-    for(i = offset; i < (offset + length); i++) {
+    for(var i = offset; i < (offset + length); i++) {
         bytesToProcess.push(data[i])
     }
 

@@ -8,7 +8,7 @@ var decodeMapi = ((data) => {
     var numProperties = utils.processBytesToInteger(data, offset, 4)
     offset += 4
 
-    for (i = 0; i < numProperties; i++) {
+    for (var i = 0; i < numProperties; i++) {
         if (offset >= dataLen) {
             continue
         }
@@ -57,7 +57,7 @@ var decodeMapi = ((data) => {
 
         var attrData = []
 
-        for (i = 0; i < valueCount; i++) {
+        for (var i = 0; i < valueCount; i++) {
             var length = typeSize
             if (typeSize < 0) {
                 length = utils.processBytesToInteger(data, offset, 4)

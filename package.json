@@ -2,9 +2,32 @@
   "name": "node-tnef",
   "version": "1.0.0",
   "description": "TNEF Parser using NodeJS",
-  "main": "index.js",
+  "babel": {
+    "presets": [
+      [
+        "env",
+        {
+          "targets": {
+            "node": "current"
+          }
+        }
+      ]
+    ]
+  },
+  "main": "dist/index.js",
+  "bin": {
+    "node-tnef": "dist/bin/node-tnef.js"
+  },
   "scripts": {
+    "prebuild": "npm run clean",
+    "build": "babel src --out-dir dist",
+    "clean": "rimraf dist",
+    "prepublish": "npm run build",
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gatewayapps/node-tnef.git"
   },
   "keywords": [
     "tnef",
@@ -12,10 +35,29 @@
     "parser",
     "email"
   ],
-  "author": "John Murphy (Gateway Apps, LLC.)",
+  "author": "John Murphy <john@gatewayapps.com> (http://www.gatewayapps.com)",
   "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gatewayapps/node-tnef/issues"
+  },
+  "homepage": "https://github.com/gatewayapps/node-tnef#readme",
+  "devDependencies": {
+    "babel": "^6.23.0",
+    "babel-cli": "^6.26.0",
+    "babel-eslint": "^8.0.1",
+    "babel-preset-env": "^1.6.0",
+    "eslint": "^4.7.2",
+    "eslint-config-standard": "^10.2.1",
+    "eslint-plugin-babel": "^4.1.2",
+    "eslint-plugin-import": "^2.7.0",
+    "eslint-plugin-node": "^5.2.0",
+    "eslint-plugin-promise": "^3.5.0",
+    "eslint-plugin-standard": "^3.0.1",
+    "rimraf": "^2.6.2"
+  },
   "dependencies": {
     "bluebird": "^3.5.1",
-    "convert-string": "^0.1.0"
+    "convert-string": "^0.1.0",
+    "yargs": "^10.0.3"
   }
 }
