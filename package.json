@@ -1,6 +1,6 @@
 {
   "name": "node-tnef",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "TNEF Parser using NodeJS",
   "babel": {
     "presets": [
