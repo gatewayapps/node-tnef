@@ -3,6 +3,11 @@ NodeJS project that will parse Transport Neutral Encapsulation Format (TNEF) fil
 
 Based on the GO project: https://github.com/Teamwork/tnef
 
+# What are TNEF files?
+Read here for more information: https://en.wikipedia.org/wiki/Transport_Neutral_Encapsulation_Format
+
+In a nutshell, the TNEF format was created by Microsoft as a proprietary format for sending Rich Text Format emails and attachments. Unfortunately, those who are using email clients that are not created by Microsoft(so, not Outlook or Exchange) cannot open these emails/attachments. Most TNEF files are named `winmail.dat` but other names are common as well such as `win.dat` and `Part 1.2`
+
 # How to Install
 To install globally: 
 `npm install node-tnef -g`
