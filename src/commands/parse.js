@@ -4,6 +4,7 @@ import utils from '../bin/util'
 import mapi from '../bin/mapi'
 import fs from 'fs'
 import path from 'path'
+import bunyan from 'bunyan'
 
 export const command = 'parse [directory] [file]'
 
@@ -25,6 +26,8 @@ export const builder = {
         demandOption: false
     }
 }
+
+const log = bunyan.createLogger({ name: 'node-tnef' })
 
 // standard TNEF signature
 const tnefSignature = 0x223e9f78
@@ -71,13 +74,13 @@ export function handler(argv) {
     const opts = parseOptions(argv)
 
     if (opts && opts.directory) {
-        console.log('Begin iterating through the directory:' + opts.directory)
+        log.info('Begin iterating through the directory:' + opts.directory)
         ProcessDirectory(opts.directory)
     } else if (opts && opts.file) {
-        console.log('Begin parsing the file:' + opts.file)
+        log.info('Begin parsing the file:' + opts.file)
         ProcessFile(opts.file)
     } else {
-        console.log('No arguments specified!')
+        log.warn('No arguments specified!')
     }
 }
 
@@ -106,14 +109,14 @@ var addAttr = ((obj, attachment) => {
 // before calling the normal Decode function on the data.
 var DecodeFile = ((path) => {
     return new Promise((resolve, reject) => {
-        console.log('Read the supposed TNEF file: ' + path)
+        log.info('Read the supposed TNEF file: ' + path)
 
         fs.readFile(path, (err, data) => {
             if (!err) {
                 var arr = [...data]
                 resolve(Decode(arr, path))
             } else {
-                console.log(err);
+                log.error(err);
                 reject(err)
             }
         })
@@ -129,11 +132,11 @@ var Decode = ((data, path) => {
 
     // if the signature we get doesn't match the TNEF signature, exit
     if (signature !== tnefSignature) {
-        console.log('Value of ' + signature + ' did not equal the expected value of ' + tnefSignature)
+        log.warn('Value of ' + signature + ' did not equal the expected value of ' + tnefSignature)
         return null
     }
 
-    console.log('Found a valid TNEF signature for ' + path)
+    log.info('Found a valid TNEF signature for ' + path)
 
     // set the starting offset past the signature
     var offset = 6
@@ -149,7 +152,7 @@ var Decode = ((data, path) => {
         var obj = decodeTNEFObject(tempData)
 
         if (!obj) {
-            console.log('Did not get a TNEF object back from file ' + path + ', exit')
+            log.error('Did not get a TNEF object back from file ' + path + ', exit')
             break;
         }
 
@@ -220,7 +223,7 @@ var ProcessDirectory = ((directory) => {
     // iterate through each file, and run DecodeFile
     fs.readdir(directory, (err, files) => {
         if (err) {
-            console.error('Could not list the directory: ', err)
+            log.error('Could not list the directory: ', err)
             process.exit(1)
         }
 
@@ -245,7 +248,7 @@ var ProcessFile = ((file, directory) => {
             fs.mkdirSync(processedPath)
         }
 
-        console.log('ATTEMPTING TO PARSE ' + fullPath);
+        log.info('ATTEMPTING TO PARSE ' + fullPath);
 
         DecodeFile(fullPath).then((result) => {
             // if there is an attachment, extract it and save to file
@@ -254,19 +257,19 @@ var ProcessFile = ((file, directory) => {
                     var attachment = result.Attachments[a]
 
                     fs.writeFile(path.join(processedPath, attachment.Title), new Buffer(attachment.Data), (err) => {
-                        console.log(err)
+                        log.error(err)
                         reject(err)
                     })
                 }
 
-                console.log('Done decoding ' + fullPath + '!!')
+                log.info('Done decoding ' + fullPath + '!!')
                 resolve(null)
             } else {
-                console.log('Something went wrong with parsing ' + fullPath + '. Make sure this is a TNEF file. If you are certain it is, possibly the file is corrupt')
+                log.warn('Something went wrong with parsing ' + fullPath + '. Make sure this is a TNEF file. If you are certain it is, possibly the file is corrupt')
                 resolve(null)
             }
         }).catch((err) => {
-            console.error('Something went wrong parsing ' + fullPath, err)
+            log.error('Something went wrong parsing ' + fullPath, err)
             reject(err)
         })
     })
