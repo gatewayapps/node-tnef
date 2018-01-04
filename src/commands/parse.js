@@ -84,6 +84,26 @@ export function handler(argv) {
     }
 }
 
+// method that can be used within another Node module to parse a single
+// TNEF file given the file path and a callback
+export function parse(filePath, callback) {
+    log.info('ATTEMPTING TO PARSE ' + filePath);
+
+    DecodeFile(filePath).then((result) => {
+        // if there is an attachment, extract it and save to file
+        if (result && result.Attachments && result.Attachments.length > 0) {
+            log.info('Done decoding ' + filePath + '!!')
+            callback(false, result.Attachments)
+        } else {
+            log.warn('Something went wrong with parsing ' + filePath + '. Make sure this is a TNEF file. If you are certain it is, possibly the file is corrupt')
+            callback(true, null)
+        }
+    }).catch((err) => {
+        log.error('Something went wrong parsing ' + filePath, err)
+        callback(true, err)
+    })
+}
+
 function parseOptions(argv) {
     if (!argv) {
         throw new Error('No arguments provided!')

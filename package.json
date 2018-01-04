@@ -14,7 +14,7 @@
       ]
     ]
   },
-  "main": "dist/index.js",
+  "main": "dist/commands/parse.js",
   "bin": {
     "node-tnef": "dist/bin/node-tnef.js"
   },
