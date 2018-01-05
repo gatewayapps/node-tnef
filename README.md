@@ -15,7 +15,7 @@ To install globally:
 To install to your local folder:
 `npm install node-tnef`
 
-# How to Use
+# How to Use as a Console application
 Run: `node-tnef --help` for a condensed outline of how to use the command line application
 
 `node-tnef` can parse entire directories or just single files.
@@ -27,6 +27,33 @@ If you are attempting to parse just a single file, find the file that is the sup
 `node-tnef parse -f <path to your TNEF file>` or `node-tnef parse --file <path to your TNEF file>`
 
 The TNEF parser will enumerate every file in the directory. If the file does not contain the TNEF signature, it will output to the console and move to the next file. If the file contains the TNEF signature, the parser will extract the attachment contents and write them to the new folder `<path to your TNEF files>/processed`.
+
+# How to use within a NodeJS project
+Just require in `node-tnef` into a NodeJS project. The `node-tnef` library currently has a `parse` method that:
+- takes a path to a TNEF formatted file
+- a callback function which returns an error object and an object containing all attachments within the provided file(or null if none)
+
+The format of the content object returned is an Array Object. Can be null
+
+Object Properties:
+- Title - The attachment's title(including file extension)
+- Data - The attachment data. Can be used to write to a file using `fs` or another mechanism. Create a new Buffer passing in Data.
+
+Example:
+```
+var tnef = require('node-tnef')
+var fs = require('fs')
+var path = require('path')
+
+tnef.parse('/path/to/the/tnef/file', function (err, content) {
+    // here you could write the data to a file for example
+    var firstAttachment = content[0]
+    fs.writeFile(path.join(aPath, firstAttachment.Title), new Buffer(firstAttachment.Data), (err) => {
+        console.log('success!')
+    })
+    ...
+})
+```
 
 # Issues/Feedback?
 Create an issue at this repo and I will try my best to fix the problem or implement the suggestion.

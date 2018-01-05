@@ -14,7 +14,7 @@
       ]
     ]
   },
-  "main": "dist/index.js",
+  "main": "dist/commands/parse.js",
   "bin": {
     "node-tnef": "dist/bin/node-tnef.js"
   },
@@ -57,6 +57,7 @@
   },
   "dependencies": {
     "bluebird": "^3.5.1",
+    "bunyan": "^1.8.12",
     "convert-string": "^0.1.0",
     "yargs": "^10.0.3"
   }
