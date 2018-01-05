@@ -84,6 +84,20 @@ export function handler(argv) {
     }
 }
 
+/**
+ * This callback type is called `parseCallback` and is displayed as a global symbol.
+ *
+ * @callback parseCallback
+ * @param {Object[]} Attachments - Array of TNEF attachments
+ */
+
+/**
+ * parse a single
+ * TNEF file given the file path and a callback
+ * @param {string} filePath - The path to the TNEF file
+ * @param {parseCallback} callback - The callback
+ *  
+ */
 // method that can be used within another Node module to parse a single
 // TNEF file given the file path and a callback
 export function parse(filePath, callback) {
@@ -267,7 +281,7 @@ var ProcessFile = ((file, directory) => {
         if (!fs.existsSync(processedPath)) {
             fs.mkdirSync(processedPath)
         }
-
+        
         log.info('ATTEMPTING TO PARSE ' + fullPath);
 
         DecodeFile(fullPath).then((result) => {
