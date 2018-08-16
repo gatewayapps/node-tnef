@@ -17,7 +17,7 @@ var decodeMapi = ((data) => {
         offset += 2
 
         var isMultiValue = (attrType & mvFlag) !== 0
-        attrType &= ~mvFlag;
+        attrType &= ~mvFlag
 
         var typeSize = getTypeSize(attrType)
         if (typeSize < 0) {
@@ -81,27 +81,27 @@ var getTypeSize = attrType => {
     switch (attrType) {
         case szmapiShort:
         case szmapiBoolean:
-            return 2;
+            return 2
         case szmapiInt:
         case szmapiFloat:
         case szmapiError:
-            return 4;
+            return 4
         case szmapiDouble:
         case szmapiApptime:
         case szmapiCurrency:
         case szmapiInt8byte:
         case szmapiSystime:
-            return 8;
+            return 8
         case szmapiCLSID:
-            return 16;
+            return 16
         case szmapiString:
         case szmapiUnicodeString:
         case szmapiObject:
         case szmapiBinary:
-            return -1;
+            return -1
     }
-    return 0;
-};
+    return 0
+}
 
 const mvFlag = 0x1000 // OR with type means multiple values
 
