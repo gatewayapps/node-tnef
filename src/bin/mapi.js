@@ -17,7 +17,7 @@ var decodeMapi = ((data) => {
         offset += 2
 
         var isMultiValue = (attrType & mvFlag) !== 0
-        attrType &= mvFlag
+        attrType &= ~mvFlag
 
         var typeSize = getTypeSize(attrType)
         if (typeSize < 0) {
@@ -71,27 +71,37 @@ var decodeMapi = ((data) => {
             offset += (-length & 3)
         }
 
-        attrs.push({ Type: attrType, Name: attrName, Data: attrData, GUID: guid })
+        attrs.push({ Type: attrType, Name: attrName, Data: attrData[0], GUID: guid })
     }
 
     return attrs
 })
 
-var getTypeSize = ((attrType) => {
+var getTypeSize = attrType => {
     switch (attrType) {
-        case szmapiShort, szmapiBoolean:
+        case szmapiShort:
+        case szmapiBoolean:
             return 2
-        case szmapiInt, szmapiFloat, szmapiError:
+        case szmapiInt:
+        case szmapiFloat:
+        case szmapiError:
             return 4
-        case szmapiDouble, szmapiApptime, szmapiCurrency, szmapiInt8byte, szmapiSystime:
+        case szmapiDouble:
+        case szmapiApptime:
+        case szmapiCurrency:
+        case szmapiInt8byte:
+        case szmapiSystime:
             return 8
         case szmapiCLSID:
             return 16
-        case szmapiString, szmapiUnicodeString, szmapiObject, szmapiBinary:
+        case szmapiString:
+        case szmapiUnicodeString:
+        case szmapiObject:
+        case szmapiBinary:
             return -1
     }
     return 0
-})
+}
 
 const mvFlag = 0x1000 // OR with type means multiple values
 
@@ -544,5 +554,7 @@ const MAPIIdSecureMax = 0x67FF
 
 module.exports = {
     decodeMapi,
-    getTypeSize
+    getTypeSize,
+    MAPIBodyHTML,
+    MAPIBody
 }
