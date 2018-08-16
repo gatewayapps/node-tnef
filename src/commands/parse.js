@@ -106,8 +106,11 @@ export function parse(filePath, callback) {
     DecodeFile(filePath).then((result) => {
         // if there is an attachment, extract it and save to file
         if (result && result.Attachments && result.Attachments.length > 0) {
-            log.info('Done decoding ' + filePath + '!!')
-            callback(false, result.Attachments)
+            log.info('Done decoding ' + filePath + ' and found attachments!!')
+            callback(false, result)
+        } else if (result && (result.BodyHTML || result.Body)) {
+            log.info('Done decoding ' + filePath + ' and found email body!!')
+            callback(false, result)
         } else {
             log.warn('Something went wrong with parsing ' + filePath + '. Make sure this is a TNEF file. If you are certain it is, possibly the file is corrupt')
             callback(true, null)
@@ -182,7 +185,7 @@ var Decode = ((data, path) => {
     while (offset < data.length) {
         // get only the data within the range of offset and the array length
         var tempData = utils.processBytes(data, offset, data.length)
-        // decode the TNEF objects
+            // decode the TNEF objects
         var obj = decodeTNEFObject(tempData)
 
         if (!obj) {
@@ -205,7 +208,7 @@ var Decode = ((data, path) => {
             tnef.Attributes = mapi.decodeMapi(obj.Data)
 
             // get the body property if it exists
-            for (var attr in tnef.Attributes) {
+            for (var attr of tnef.Attributes) {
                 switch (attr.Name) {
                     case mapi.MAPIBody:
                         tnef.Body = attr.Data
@@ -281,7 +284,7 @@ var ProcessFile = ((file, directory) => {
         if (!fs.existsSync(processedPath)) {
             fs.mkdirSync(processedPath)
         }
-        
+
         log.info('ATTEMPTING TO PARSE ' + fullPath);
 
         DecodeFile(fullPath).then((result) => {
