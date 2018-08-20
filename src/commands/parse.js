@@ -185,7 +185,7 @@ var Decode = ((data, path) => {
     while (offset < data.length) {
         // get only the data within the range of offset and the array length
         var tempData = utils.processBytes(data, offset, data.length)
-        // decode the TNEF objects
+            // decode the TNEF objects
         var obj = decodeTNEFObject(tempData)
 
         if (!obj) {
@@ -206,14 +206,15 @@ var Decode = ((data, path) => {
             addAttr(obj, attachment)
         } else if (obj.Name === ATTMAPIPROPS) {
             tnef.Attributes = mapi.decodeMapi(obj.Data)
-
-            // get the body property if it exists
-            for (var attr of tnef.Attributes) {
-                switch (attr.Name) {
-                    case mapi.MAPIBody:
-                        tnef.Body = attr.Data
-                    case mapi.MAPIBodyHTML:
-                        tnef.BodyHTML = attr.Data
+            if (tnef.Attributes) {
+                // get the body property if it exists
+                for (var attr of tnef.Attributes) {
+                    switch (attr.Name) {
+                        case mapi.MAPIBody:
+                            tnef.Body = attr.Data
+                        case mapi.MAPIBodyHTML:
+                            tnef.BodyHTML = attr.Data
+                    }
                 }
             }
         }
@@ -284,6 +285,7 @@ var ProcessFile = ((file, directory) => {
         if (!fs.existsSync(processedPath)) {
             fs.mkdirSync(processedPath)
         }
+
         log.info('ATTEMPTING TO PARSE ' + fullPath);
 
         DecodeFile(fullPath).then((result) => {
@@ -298,8 +300,20 @@ var ProcessFile = ((file, directory) => {
                     })
                 }
 
+                if (result.Body || result.BodyHTML) {
+                    fs.writeFile(path.join(processedPath, 'htmlbody.html'), new Buffer(result.Body || result.BodyHTML), (err) => {
+                        log.error(err)
+                        reject(err)
+                    })
+                }
+
                 log.info('Done decoding ' + fullPath + '!!')
                 resolve(null)
+            } else if (result && (result.Body || result.BodyHTML)) {
+                fs.writeFile(path.join(processedPath, 'htmlbody.html'), new Buffer(result.Body || result.BodyHTML), (err) => {
+                    log.error(err)
+                    reject(err)
+                })
             } else {
                 log.warn('Something went wrong with parsing ' + fullPath + '. Make sure this is a TNEF file. If you are certain it is, possibly the file is corrupt')
                 resolve(null)
