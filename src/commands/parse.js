@@ -106,8 +106,11 @@ export function parse(filePath, callback) {
     DecodeFile(filePath).then((result) => {
         // if there is an attachment, extract it and save to file
         if (result && result.Attachments && result.Attachments.length > 0) {
-            log.info('Done decoding ' + filePath + '!!')
-            callback(false, result.Attachments)
+            log.info('Done decoding ' + filePath + ' and found attachments!!')
+            callback(false, result)
+        } else if (result && (result.BodyHTML || result.Body)) {
+            log.info('Done decoding ' + filePath + ' and found email body!!')
+            callback(false, result)
         } else {
             log.warn('Something went wrong with parsing ' + filePath + '. Make sure this is a TNEF file. If you are certain it is, possibly the file is corrupt')
             callback(true, null)
@@ -203,14 +206,15 @@ var Decode = ((data, path) => {
             addAttr(obj, attachment)
         } else if (obj.Name === ATTMAPIPROPS) {
             tnef.Attributes = mapi.decodeMapi(obj.Data)
-
-            // get the body property if it exists
-            for (var attr in tnef.Attributes) {
-                switch (attr.Name) {
-                    case mapi.MAPIBody:
-                        tnef.Body = attr.Data
-                    case mapi.MAPIBodyHTML:
-                        tnef.BodyHTML = attr.Data
+            if (tnef.Attributes) {
+                // get the body property if it exists
+                for (var attr of tnef.Attributes) {
+                    switch (attr.Name) {
+                        case mapi.MAPIBody:
+                            tnef.Body = attr.Data
+                        case mapi.MAPIBodyHTML:
+                            tnef.BodyHTML = attr.Data
+                    }
                 }
             }
         }
@@ -281,7 +285,7 @@ var ProcessFile = ((file, directory) => {
         if (!fs.existsSync(processedPath)) {
             fs.mkdirSync(processedPath)
         }
-        
+
         log.info('ATTEMPTING TO PARSE ' + fullPath);
 
         DecodeFile(fullPath).then((result) => {
@@ -296,8 +300,20 @@ var ProcessFile = ((file, directory) => {
                     })
                 }
 
+                if (result.Body || result.BodyHTML) {
+                    fs.writeFile(path.join(processedPath, 'htmlbody.html'), new Buffer(result.Body || result.BodyHTML), (err) => {
+                        log.error(err)
+                        reject(err)
+                    })
+                }
+
                 log.info('Done decoding ' + fullPath + '!!')
                 resolve(null)
+            } else if (result && (result.Body || result.BodyHTML)) {
+                fs.writeFile(path.join(processedPath, 'htmlbody.html'), new Buffer(result.Body || result.BodyHTML), (err) => {
+                    log.error(err)
+                    reject(err)
+                })
             } else {
                 log.warn('Something went wrong with parsing ' + fullPath + '. Make sure this is a TNEF file. If you are certain it is, possibly the file is corrupt')
                 resolve(null)
