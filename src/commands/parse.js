@@ -185,7 +185,7 @@ var Decode = ((data, path) => {
     while (offset < data.length) {
         // get only the data within the range of offset and the array length
         var tempData = utils.processBytes(data, offset, data.length)
-            // decode the TNEF objects
+        // decode the TNEF objects
         var obj = decodeTNEFObject(tempData)
 
         if (!obj) {
