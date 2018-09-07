@@ -31,15 +31,17 @@ The TNEF parser will enumerate every file in the directory. If the file does not
 # How to use within a NodeJS project
 Just require in `node-tnef` into a NodeJS project. The `node-tnef` library currently has a `parse` method that:
 - takes a path to a TNEF formatted file
-- a callback function which returns an error object and an object containing all attachments within the provided file(or null if none)
+- a callback function which returns a Buffer containing the decoded TNEF content
 
-The format of the content object returned is an Array Object. Can be null
+There is also a `parseBuffer` method that:
+- takes a Buffer representation of the TNEF file
+- a callback function which returns a Buffer containing the decoded TNEF content
 
 Object Properties:
 - Title - The attachment's title(including file extension)
 - Data - The attachment data. Can be used to write to a file using `fs` or another mechanism. Create a new Buffer passing in Data.
 
-Example:
+Examples:
 ```
 var tnef = require('node-tnef')
 var fs = require('fs')
@@ -52,6 +54,11 @@ tnef.parse('/path/to/the/tnef/file', function (err, content) {
         console.log('success!')
     })
     ...
+})
+
+tnef.parseBuffer([your buffer of data], function (err, content) {
+    // content would contain the result data as a Buffer
+    // from here you can write to a file, evaluate the contents(ex. content.Attachments or content.Body)
 })
 ```
 
