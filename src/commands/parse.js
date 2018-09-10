@@ -121,6 +121,12 @@ export function parse(filePath, callback) {
     })
 }
 
+export function parseBuffer(data, callback) {
+    var arr = [...data]
+
+    callback(true, Decode(arr))
+}
+
 function parseOptions(argv) {
     if (!argv) {
         throw new Error('No arguments provided!')
@@ -162,7 +168,7 @@ var DecodeFile = ((path) => {
 
 // Decode will accept a stream of bytes in the TNEF format and extract the
 // attachments and body into a Data object.
-var Decode = ((data, path) => {
+var Decode = ((data) => {
 
     // get the first 32 bits of the file
     var signature = utils.processBytesToInteger(data, 0, 4)
@@ -173,7 +179,7 @@ var Decode = ((data, path) => {
         return null
     }
 
-    log.info('Found a valid TNEF signature for ' + path)
+    log.info('Found a valid TNEF signature')
 
     // set the starting offset past the signature
     var offset = 6
@@ -189,7 +195,7 @@ var Decode = ((data, path) => {
         var obj = decodeTNEFObject(tempData)
 
         if (!obj) {
-            log.error('Did not get a TNEF object back from file ' + path + ', exit')
+            log.error('Did not get a TNEF object back, exit')
             break;
         }
 

@@ -7,7 +7,7 @@ String.prototype.replaceAll = function (search, replacement) {
 var byteArrayToInt = ((bytes) => {
     var num = 0
     var n = 0
-
+ 
     for(var b in bytes) {
         num += (parseInt(bytes[b]) << n)
         n += 8
