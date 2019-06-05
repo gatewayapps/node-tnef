@@ -126,9 +126,9 @@ export function parseBuffer(data, callback) {
 
     try {
         const decodedResult = Decode(arr)
-        callback(decodedResult ? true : false, decodedResult)
+        callback(decodedResult ? false : true, decodedResult)
     } catch (err) {
-        callback(false, err)
+        callback(true, err)
     }
 }
 
