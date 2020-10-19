@@ -1,4 +1,3 @@
-import Promise from 'bluebird'
 import convertString from 'convert-string'
 import utils from '../bin/util'
 import mapi from '../bin/mapi'

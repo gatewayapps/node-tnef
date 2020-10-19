@@ -56,7 +56,6 @@
     "rimraf": "^3.0.2"
   },
   "dependencies": {
-    "bluebird": "^3.7.2",
     "bunyan": "^1.8.12",
     "convert-string": "^0.1.0",
     "yargs": "^15.3.1"
